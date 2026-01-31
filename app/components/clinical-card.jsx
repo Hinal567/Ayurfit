@@ -24,11 +24,11 @@
           </div>
           
           {/* Prescription line art */}
-          <div className="absolute -right-4 -bottom-4 opacity-5">
+          {/* <div className="absolute -right-4 -bottom-4 opacity-5">
             <svg width="150" height="150" viewBox="0 0 100 100" className="text-forest">
               <text x="10" y="60" fontSize="60" fill="currentColor" fontFamily="serif">Rx</text>
             </svg>
-          </div>
+          </div> */}
         </div>
 
         {/* Results Grid */}
