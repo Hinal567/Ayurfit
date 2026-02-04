@@ -1,57 +1,65 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Header } from "@/components/header"
-import { SymptomInput } from "@/components/symptom-input"
-import { ClinicalCard } from "@/components/clinical-card"
+import { useState } from "react";
+import { Header } from "@/components/header";
+import { SymptomInput } from "@/components/symptom-input";
+import { ClinicalCard } from "@/components/clinical-card";
 import {
   TulsiIllustration,
   AshwagandhaIllustration,
   NeemIllustration,
   GingerIllustration,
-} from "@/components/herb-illustrations"
-import { Leaf } from "lucide-react"
+} from "@/components/herb-illustrations";
+import { Leaf } from "lucide-react";
 
 export default function AyurFitPage() {
-  const [isLoading, setIsLoading] = useState(false)
-  const [result, setResult] = useState(null)
+  const [isLoading, setIsLoading] = useState(false);
+  const [result, setResult] = useState(null);
 
   const handleAnalyze = async (data) => {
-    setIsLoading(true)
-    setResult(null)
-    
+    setIsLoading(true);
+    setResult(null);
+
     try {
       // 1. Call your FastAPI Backend
       const response = await fetch("http://127.0.0.1:8000/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          symptoms: data.symptoms 
+        body: JSON.stringify({
+          symptoms: data.symptoms,
         }),
-      })
+      });
 
-      if (!response.ok) throw new Error("Backend server is not responding.")
+      if (!response.ok) throw new Error("Backend server is not responding.");
 
-      const prediction = await response.json()
-      
+      const prediction = await response.json();
+
       // 2. Map Python results to match your v0 UI structure
       // We use .split(',') to turn the CSV text into bullet points for your cards
       const formattedResult = {
         diagnosis: prediction.disease,
         confidence: Math.round(prediction.confidence * 100),
-        herbs: prediction.herbs ? prediction.herbs.split(',').map(h => h.trim()) : [],
-        yogicPath: prediction.yoga ? prediction.yoga.split(',').map(y => y.trim()) : [],
-        dietaryWisdom: prediction.diet ? prediction.diet.split(',').map(d => d.trim()) : [],
-      }
-      
-      setResult(formattedResult)
+        herbs: prediction.herbs
+          ? prediction.herbs.split(",").map((h) => h.trim())
+          : [],
+        yogicPath: prediction.yoga
+          ? prediction.yoga.split(",").map((y) => y.trim())
+          : [],
+        dietaryWisdom: prediction.diet
+          ? prediction.diet.split(",").map((d) => d.trim())
+          : [],
+      };
+
+      setResult(formattedResult);
     } catch (error) {
-      console.error("Analysis failed:", error)
-      alert("Connection Error: Please ensure your Python server is running (uvicorn main:app --reload)")
+      console.error("Analysis failed:", error);
+      alert(
+        "Connection Error: Please ensure your Python server is running (uvicorn main:app --reload)",
+      );
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-parchment relative overflow-hidden">
@@ -62,7 +70,7 @@ export default function AyurFitPage() {
         <GingerIllustration className="absolute bottom-1/4 -left-12 w-48 h-48 text-forest" />
       </div>
       <div className="fixed inset-0 bg-gradient-to-br from-parchment via-transparent to-sage/10 pointer-events-none" />
-      
+
       <Header />
 
       <main className="relative z-10 pt-24 pb-16 px-6">
@@ -72,10 +80,13 @@ export default function AyurFitPage() {
               Ancient Wisdom, Modern Wellness
             </p>
             <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-semibold text-forest mb-6 text-balance leading-tight">
-              Your Journey to Balance<br />Begins Here
+              Your Journey to Balance
+              <br />
+              Begins Here
             </h1>
             <p className="text-forest-light/70 max-w-xl mx-auto leading-relaxed">
-              Experience personalized Ayurvedic insights powered by centuries of healing wisdom.
+              Experience personalized Ayurvedic insights powered by centuries of
+              healing wisdom.
             </p>
           </section>
 
@@ -95,9 +106,12 @@ export default function AyurFitPage() {
                 <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-sage/30 flex items-center justify-center">
                   <Leaf className="w-7 h-7 text-forest/50" />
                 </div>
-                <h3 className="font-serif text-xl text-forest mb-2">Assessment Ready</h3>
+                <h3 className="font-serif text-xl text-forest mb-2">
+                  Assessment Ready
+                </h3>
                 <p className="text-sm text-forest-light/60 max-w-md mx-auto">
-                  Describe your symptoms above and let our Ayurvedic analysis guide you.
+                  Describe your symptoms above and let our Ayurvedic analysis
+                  guide you.
                 </p>
               </div>
             </section>
@@ -105,5 +119,5 @@ export default function AyurFitPage() {
         </div>
       </main>
     </div>
-  )
+  );
 }

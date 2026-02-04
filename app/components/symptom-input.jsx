@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Slider } from "@/components/ui/slider";
+import { Textarea } from "@/app/components/ui/textarea";
+import { Button } from "@/app/components/ui/button";
+import { Input } from "@/app/components/ui/input";
+import { Slider } from "@/app/components/ui/slider";
 import { Loader2 } from "lucide-react";
 
 export function SymptomInput({ onAnalyze, isLoading }) {

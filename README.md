@@ -1,46 +1,51 @@
 # 🌿 AyurFit - AI-Powered Ayurvedic Healthcare Assistant
 
-An intelligent healthcare application that uses Machine Learning to provide personalized Ayurvedic treatment recommendations based on symptoms, powered by a dataset of 1,300 diseases across 18 Ayurvedic categories.
+AyurFit is a full-stack Ayurvedic health assistant that pairs a Next.js UI with a FastAPI + Sentence Transformers backend. It analyzes a user's symptom text, matches it to the closest disease entry in a curated dataset, and returns herb, diet, and yoga recommendations.
 
 ## 🎯 Project Overview
 
-AyurFit combines modern AI (Sentence Transformers) with traditional Ayurvedic medicine to:
-- Analyze user symptoms using natural language processing
+AyurFit combines modern NLP with traditional Ayurvedic guidance to:
+- Analyze free-form symptom descriptions
 - Match symptoms to diseases using semantic similarity
-- Provide personalized recommendations for herbs, diet, yoga, and lifestyle
-- Deliver age and gender-specific treatment suggestions
+- Provide recommended herbs, dietary guidance, and yogic practices
+- Present results with a confidence score for transparency
 
 ## 🏗️ Tech Stack
 
-### Frontend (Next.js)
-- **Framework:** Next.js 16 with React
-- **Styling:** Tailwind CSS
+### Frontend
+- **Framework:** Next.js 16 / React 19 (App Router)
+- **Styling:** Tailwind CSS v4 + custom design system
 - **UI Components:** Radix UI primitives
-- **Deployment:** Vercel
 
-### Backend (Python/FastAPI)
-- **Framework:** FastAPI
-- **ML Model:** Sentence Transformers (`all-MiniLM-L6-v2`)
-- **Data Processing:** Pandas, NumPy
-- **Similarity Matching:** Scikit-learn (Cosine Similarity)
+### Backend
+- **Framework:** FastAPI (Python)
+- **NLP Model:** Sentence Transformers (`all-MiniLM-L6-v2`)
+- **Similarity:** Scikit-learn (cosine similarity)
+- **Data:** Pandas + NumPy
 
 ## 📁 Project Structure
 
 ```
 Ayurfit/
-├── app/                      # Next.js app directory
-│   ├── page.jsx             # Main UI page
-│   ├── layout.jsx           # Root layout
-│   └── globals.css          # Global styles
-├── components/              # React components
-│   ├── header.jsx           # Header component
-│   ├── symptom-input.jsx    # Symptom input form
-│   ├── clinical-card.jsx    # Results display
-│   └── ui/                  # Reusable UI components
-├── main.py                  # FastAPI backend server
-├── final ayurfit.csv        # Disease dataset (1,300 diseases)
-├── final.ipynb              # ML model development notebook
-└── package.json             # Node.js dependencies
+├── app/                         # Next.js app directory
+│   ├── components/              # UI components
+│   │   ├── clinical-card.jsx
+│   │   ├── confidence-gauge.jsx
+│   │   ├── header.jsx
+│   │   ├── herb-illustrations.jsx
+│   │   ├── symptom-input.jsx
+│   │   └── ui/                  # Reusable UI primitives
+│   ├── globals.css
+│   ├── layout.jsx
+│   └── page.jsx                 # Main UI
+├── backend/
+│   └── main.py                  # FastAPI backend
+├── dataset/
+│   └── data.csv                 # Disease dataset
+├── model/
+│   └── ayurfit_nlp.ipynb         # Model development notebook
+├── package.json
+└── pnpm-lock.yaml
 ```
 
 ## 🚀 How to Run
@@ -52,64 +57,66 @@ Ayurfit/
 
 ### Step 1: Install Python Dependencies
 ```bash
-cd Ayurfit
-pip install fastapi uvicorn pandas sentence-transformers scikit-learn
+cd backend
+pip install fastapi uvicorn pandas sentence-transformers scikit-learn numpy
 ```
 
-### Step 2: Start the Backend (Python)
+### Step 2: Start the Backend (FastAPI)
 ```bash
 uvicorn main:app --reload
 ```
-The backend will start on **http://127.0.0.1:8000**
-- Wait 2-5 minutes for the ML model to load (you'll see "AyurFit is ready!")
-- Access API docs at: http://127.0.0.1:8000/docs
+The backend starts at **http://127.0.0.1:8000**.
+- First startup can take a couple of minutes while the model loads.
+- API docs: http://127.0.0.1:8000/docs
 
 ### Step 3: Start the Frontend (Next.js)
 Open a **new terminal**:
 ```bash
+cd ..
 npm install
 npm run dev
 ```
-The frontend will start on **http://localhost:3000**
+The frontend runs at **http://localhost:3000**.
 
 ### Step 4: Use the App
 1. Open http://localhost:3000 in your browser
 2. Enter symptoms (e.g., "headache and fever")
-3. Get personalized Ayurvedic recommendations!
+3. View the clinical assessment with recommendations
 
 ## 🧠 How It Works
 
 ### Machine Learning Pipeline
-
 1. **Data Preparation**
-   - 1,300 diseases with symptoms, herbs, diet recommendations
-   - Combined disease names + symptoms into searchable text
+   - `dataset/data.csv` contains diseases, symptoms, herbs, diet, and yoga fields
+   - Disease names + symptoms are combined into a search corpus
 
 2. **Embedding Generation**
    ```python
-   model = SentenceTransformer('all-MiniLM-L6-v2')
-   knowledge_embeddings = model.encode(disease_descriptions)
+   model = SentenceTransformer("all-MiniLM-L6-v2")
+   knowledge_embeddings = model.encode(knowledge_base, normalize_embeddings=True)
    ```
 
 3. **Symptom Matching**
-   - User symptoms → Convert to vector embedding
-   - Compare with all 1,300 disease embeddings using cosine similarity
-   - Add personalization bonuses for age/gender matches (+5% each)
+   - User symptoms are embedded
+   - Cosine similarity against the full dataset
+   - Best match is returned with a confidence score
 
 4. **Result Delivery**
-   - Return the highest-matching disease
-   - Provide: herbs, formulation, diet, yoga, prevention tips
+   - API returns disease, herbs, diet, yoga, and confidence
+   - UI formats CSV text into readable bullet lists
+
+### Note on Patient Details
+The UI collects age, gender, and severity, but the current backend only uses the `symptoms` text for matching. These fields are ready for future personalization.
 
 ## 📊 Dataset
 
-**1,300 diseases across 18 Ayurvedic categories:**
+The dataset includes **1,300 diseases across 18 Ayurvedic categories**, such as:
 - Neurological Disorders
 - Digestive System Disorders
 - Respiratory Disorders
 - Cardiovascular Disorders
 - Musculoskeletal Disorders
 - Mental Health Disorders
-- And 12 more...
 
 ## 🔗 API Endpoints
 
@@ -144,5 +151,5 @@ This is an AI-generated suggestion tool. Always consult a qualified Ayurvedic pr
 
 ## 🔗 Links
 
-- **Vercel Deployment:** [https://vercel.com/hinals-projects-4220bf4b/v0-ayur-fit-healthcare-ui](https://vercel.com/hinals-projects-4220bf4b/v0-ayur-fit-healthcare-ui)
-- **v0.app Chat:** [https://v0.app/chat/uijdnQWs9jK](https://v0.app/chat/uijdnQWs9jK)
+- **Vercel Deployment:** https://vercel.com/hinals-projects-4220bf4b/v0-ayur-fit-healthcare-ui
+- **v0.app Chat:** https://v0.app/chat/uijdnQWs9jK
