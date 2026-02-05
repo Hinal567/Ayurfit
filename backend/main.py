@@ -65,14 +65,17 @@ def load_model_and_data():
     symptom_text = df["Symptoms"].fillna("").astype(str)
     knowledge_base = (disease_text + " " + symptom_text).tolist()
 
-    # Load model
+    # Load model with memory optimization
     model = SentenceTransformer("all-MiniLM-L6-v2")
-
-    # Encode once
+    
+    # Encode in smaller batches to reduce memory usage
+    print(f"Encoding {len(knowledge_base)} entries...")
     knowledge_embeddings = model.encode(
         knowledge_base,
+        batch_size=32,  # Smaller batch size
         convert_to_numpy=True,
-        normalize_embeddings=True
+        normalize_embeddings=True,
+        show_progress_bar=False
     )
 
     print("AyurFit is ready!")
