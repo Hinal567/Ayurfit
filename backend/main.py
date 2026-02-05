@@ -36,20 +36,29 @@ def load_model_and_data():
 
     # Load CSV - try multiple paths for local and production
     csv_paths = [
-        BASE_DIR / "dataset" / "data.csv",
         BASE_DIR / "dataset" / "final ayurfit.csv",
+        BASE_DIR / "dataset" / "data.csv",
         BASE_DIR.parent / "dataset" / "data.csv",
     ]
     
     df = None
     for path in csv_paths:
         if path.exists():
-            df = pd.read_csv(path)
-            print(f"Loaded dataset from: {path}")
-            break
+            try:
+                df = pd.read_csv(path)
+                print(f"Loaded dataset from: {path}")
+                # Verify it has the required columns
+                if "Disease" in df.columns and "Symptoms" in df.columns:
+                    break
+                else:
+                    print(f"Warning: {path} missing required columns, trying next...")
+                    df = None
+            except Exception as e:
+                print(f"Error loading {path}: {e}")
+                df = None
     
     if df is None:
-        raise FileNotFoundError("Could not find dataset CSV file")
+        raise FileNotFoundError("Could not find valid dataset CSV file with required columns")
 
     # Prepare knowledge base
     disease_text = df["Disease"].fillna("").astype(str)
