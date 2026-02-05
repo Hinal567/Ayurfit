@@ -34,8 +34,22 @@ def load_model_and_data():
 
     print("Loading AyurFit Brain...")
 
-    # Load CSV
-    df = pd.read_csv("../dataset/data.csv")
+    # Load CSV - try multiple paths for local and production
+    csv_paths = [
+        BASE_DIR / "dataset" / "data.csv",
+        BASE_DIR / "dataset" / "final ayurfit.csv",
+        BASE_DIR.parent / "dataset" / "data.csv",
+    ]
+    
+    df = None
+    for path in csv_paths:
+        if path.exists():
+            df = pd.read_csv(path)
+            print(f"Loaded dataset from: {path}")
+            break
+    
+    if df is None:
+        raise FileNotFoundError("Could not find dataset CSV file")
 
     # Prepare knowledge base
     disease_text = df["Disease"].fillna("").astype(str)
